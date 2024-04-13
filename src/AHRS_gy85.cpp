@@ -155,10 +155,13 @@ void update(float gx, float gy, float gz, float ax, float ay, float az, float mx
 
 double LowpassFilter(float data, PassFilter *LOWPASS){
 
-	double Actual_value = data*(1-LOWPASS->RC) + (LOWPASS->data_k)*LOWPASS->RC;
+	double a = invSampleFreq/(LOWPASS->RC + invSampleFreq);
+
+	double Actual_value = a*(data)+(1-data)*LOWPASS->yk;
 
 	LOWPASS-> data_k = data;
-	
+	LOWPASS->yk = Actual_value;
+
 	return Actual_value;
 }
 
@@ -166,16 +169,17 @@ double LowpassFilter(float data, PassFilter *LOWPASS){
 double HighpassFilter(float data,PassFilter *HIGHPASS){
 	double a = HIGHPASS->RC / (HIGHPASS->RC + invSampleFreq);
 	
-	double Actual_value = data - (HIGHPASS->data_k*a);
+	double Actual_value = a*HIGHPASS->yk+a*(data-HIGHPASS->data_k);
 
 	HIGHPASS->data_k=data;
+	HIGHPASS->yk = Actual_value;
 	
 	return Actual_value;
 }
 
 double MedianFilter(float data, PassFilter *Median){
 	
-	double Actual_value = (data-Median->data_k)/2;
+	double Actual_value = ((data)-(Median->data_k))/2;
 	
 	Median->data_k = data;
 	
@@ -191,6 +195,12 @@ double MedianFilter(float data, PassFilter *Median){
 
 
 void updateIMU(float gx, float gy, float gz, float ax, float ay, float az) {
+
+
+	/////////////////////////////////////////
+		/*Algoritmo tipico de Madgwick*/
+	/////////////////////////////////////////
+
 	float recipNorm;
 	float s0, s1, s2, s3;
 	float qDot1, qDot2, qDot3, qDot4;

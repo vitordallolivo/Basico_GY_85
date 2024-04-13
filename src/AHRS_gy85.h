@@ -18,14 +18,10 @@ float getRoll();
 float getYaw();
 float getPitch();
 
-
-
-
-
-
 struct PassFilter{
     double RC=1;
     double data_k=0;
+    double yk=0;
 };
 
 

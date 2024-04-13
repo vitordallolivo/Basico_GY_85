@@ -123,7 +123,7 @@ void loop(){
       yaw1   =  getYaw();
       
     for(int j = 0 ;j <3;j++){
-        acceleration[j] = HighpassFilter(gy.acceleration[j],&PASS_FILTER);
+        acceleration[j] = MedianFilter(gy.acceleration[j],&PASS_FILTER);
         velocity[j] = acceleration[j]/100;
         gyro[j] = gy.gyro[j];
         magnometer[j] = gy.bussola[j];
