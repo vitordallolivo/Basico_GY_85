@@ -23,20 +23,16 @@ float getPitch();
 
 
 
+struct PassFilter{
+    double RC=1;
+    double data_k=0;
+};
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+double LowpassFilter(float data, PassFilter *LOWPASS);
+double HighpassFilter(float data,PassFilter *HIGHPASS);
+double MedianFilter(float data, PassFilter *Median);
 
 
 

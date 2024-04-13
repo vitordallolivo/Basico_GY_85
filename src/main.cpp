@@ -21,6 +21,8 @@
 #define SERIAL_WRITE_A
 
 GY_85 gy;
+offset OFF;
+
 
 /* 
 
@@ -35,6 +37,11 @@ gy.itg.DLPF_CFG = 0x01;
 
 
 #ifdef MADGWICK_AHRS
+
+PassFilter PASS_FILTER;
+
+
+
 byte flag_uptade_AHRS=0;
 
 float pitch1=0,yaw1=0,roll1=0;
@@ -42,19 +49,40 @@ float pitch1=0,yaw1=0,roll1=0;
 float acceleration[3]={0,0,1};
 float gyro[3]={0,0,0};
 float magnometer[3]={0,0,0};
+float velocity[3]={0,0,0};
+
+
+double time;
 
 void _UPTADE_AHRS(){
   flag_uptade_AHRS = 1;
 }
+
+
+
 #endif
 
 void setup(){
+
+  PASS_FILTER.RC =0.65f;
+
+
+  OFF.gx = 0.00f;
+  OFF.gy = 0.00f;
+  OFF.gz = 0.00f;
+  OFF.ax = 0.00f;
+  OFF.ay = 0.00f;
+  OFF.az = 0.00f;
+  OFF.mx = 0.00f;
+  OFF.my = 0.00f;
+  OFF.mz = 0.00f;
+
   #ifdef SERIAL_WRITE_A
-    Serial.begin(9600);
+    Serial.begin(115200);
   #endif
 
   gy.itg.SMPLRT_DIV = 0x00; // Frequencia dos samples F_sample = (1khz) /(SMPLT_DIV +1)
-  init_data(gy);
+  init_data(gy,OFF);
 
   #ifdef SD_CARD_WRITE
     if(!SD.begin(10)){
@@ -84,7 +112,7 @@ void setup(){
 
 
 void loop(){
-  read_data(&gy);
+  gy=read_data(gy);
   
   #ifdef MADGWICK_AHRS  
     if(flag_uptade_AHRS){
@@ -94,21 +122,16 @@ void loop(){
       pitch1 =  getPitch();
       yaw1   =  getYaw();
       
-
-      acceleration[0] = gy.adx.Xg;
-      acceleration[1] = gy.adx.Yg; 
-      acceleration[2] = gy.adx.Zg;
-
-      gyro[0] = gy.itg.x;
-      gyro[1] = gy.itg.y;
-      gyro[2] = gy.itg.z;
-
-      magnometer[0] = gy.hmc.X;
-      magnometer[1] = gy.hmc.Y;
-      magnometer[2] = gy.hmc.Z;
-
+    for(int j = 0 ;j <3;j++){
+        acceleration[j] = HighpassFilter(gy.acceleration[j],&PASS_FILTER);
+        velocity[j] = acceleration[j]/100;
+        gyro[j] = gy.gyro[j];
+        magnometer[j] = gy.bussola[j];
+    }
 
       flag_uptade_AHRS = 0;
+
+      time = millis();
 
     }
   #endif
@@ -140,7 +163,9 @@ void loop(){
     Serial.print(pitch1);
     Serial.print(F("\t"));
     Serial.print(yaw1);
-  
+    Serial.print(F("\t"));
+    Serial.print(time);
+
     Serial.println();
   #endif
 

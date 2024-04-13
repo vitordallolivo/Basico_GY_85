@@ -12,6 +12,8 @@ float q3=0.0f;
 
 // Tempo dt entre samples
 
+double data_k_HP = 0;
+double data_k_LP = 0;
 float invSampleFreq;
 
 // Angulos de euler
@@ -149,7 +151,43 @@ void update(float gx, float gy, float gz, float ax, float ay, float az, float mx
 }
 
 
+
+
+double LowpassFilter(float data, PassFilter *LOWPASS){
+
+	double Actual_value = data*(1-LOWPASS->RC) + (LOWPASS->data_k)*LOWPASS->RC;
+
+	LOWPASS-> data_k = data;
+	
+	return Actual_value;
+}
+
+
+double HighpassFilter(float data,PassFilter *HIGHPASS){
+	double a = HIGHPASS->RC / (HIGHPASS->RC + invSampleFreq);
+	
+	double Actual_value = data - (HIGHPASS->data_k*a);
+
+	HIGHPASS->data_k=data;
+	
+	return Actual_value;
+}
+
+double MedianFilter(float data, PassFilter *Median){
+	
+	double Actual_value = (data-Median->data_k)/2;
+	
+	Median->data_k = data;
+	
+	return Actual_value;
+
+}
+
+
+
 // Quando não há medida do magnometro ou ela é normalizada
+
+
 
 
 void updateIMU(float gx, float gy, float gz, float ax, float ay, float az) {

@@ -34,8 +34,8 @@ struct ADX{
 struct HMC{
   int ADRESS = 0x1E;
 
-  const byte Conf_A = 0x00;
-  const byte Conf_B = 0x01;
+  byte Conf_A = 0x00;
+  byte Conf_B = 0x01;
 
   // CONFIGURAÇÕES DE A
 
@@ -115,19 +115,19 @@ struct HMC{
 
   byte B_CONFIG = CRB <<5;
 
-  const byte MODE_REGISTER = 0x02;
+   byte MODE_REGISTER = 0x02;
   byte MODE_type =0x00;
 
-  const byte X_MSB = 0x03;
-  const byte X_LSB = 0x04;
+   byte X_MSB = 0x03;
+   byte X_LSB = 0x04;
 
-  const byte Z_MSB = 0x05;
-  const byte Z_LSB = 0x06;
+   byte Z_MSB = 0x05;
+   byte Z_LSB = 0x06;
 
-  const byte Y_MSB = 0x07;
-  const byte Y_LSB = 0x08;
+   byte Y_MSB = 0x07;
+   byte Y_LSB = 0x08;
 
-  const byte STATUS_REGISTER = 0x09;
+   byte STATUS_REGISTER = 0x09;
 
   double X,Y,Z;
 
@@ -137,9 +137,9 @@ struct HMC{
 // Giroscopio
 struct ITG{
   int ADRESS = 0x68;
-  const byte Register_WHO_IAM  = 0X00;
+   byte Register_WHO_IAM  = 0X00;
 
-  const byte SMPLRT_DIV_REGISTER= 0x15;
+   byte SMPLRT_DIV_REGISTER= 0x15;
   byte SMPLRT_DIV = 0x00;
 
   /*
@@ -150,7 +150,7 @@ struct ITG{
 
   */
 
-  const byte DLPF_REGISTER = 0x16;
+   byte DLPF_REGISTER = 0x16;
   byte DLPF_CFG = 0x00;
   byte DLPF = 0x18 | DLPF_CFG; // 0x18 é obrigatorio
 
@@ -170,28 +170,36 @@ struct ITG{
   
   */
 
-  const byte TEMP_MSB_REGISTER =  0x1B;
-  const byte Gx_MSB_REGISTER =    0x1D;
-  const byte Gy_MSB_REGISTER =    0x1F;
-  const byte Gz_MSB_REGISTER =    0x21;
+   byte TEMP_MSB_REGISTER =  0x1B;
+   byte Gx_MSB_REGISTER =    0x1D;
+   byte Gy_MSB_REGISTER =    0x1F;
+   byte Gz_MSB_REGISTER =    0x21;
 
   double x,y,z,temp;
 
 };
 
-typedef struct GY_85{
+struct GY_85{
     ADX adx;
     ITG itg;
     HMC hmc;
-} gy85;
 
 
-void init_data(GY_85 gy85);
-void read_data(GY_85 *gy85);
+    double acceleration[3]={0.0f,0.0f,0.0f};
+    double gyro[3]={0.0f,0.0f,0.0f};
+    double bussola[3]={0.0f,0.0f,0.0f};
+};
+
+
+struct offset{
+  float gx,gy,gz;
+  float ax,ay,az;
+  float mx,my,mz;
+};
 
 
 
-
-
+void init_data(GY_85 gy85, offset OFF);
+GY_85 read_data(GY_85 gy85);
 
 #endif
