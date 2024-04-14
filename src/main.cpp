@@ -175,6 +175,12 @@ void loop(){
     arquivo.print(F(";"));
     arquivo.print(Accel.Ab);
     arquivo.print(F(";"));
+    arquivo.print(Accel.gravidade[0]);
+    arquivo.print(F(";"));
+    arquivo.print(Accel.gravidade[1]);
+    arquivo.print(F(";"));
+    arquivo.print(Accel.gravidade[2]);
+    arquivo.print(F(";"));
     arquivo.print(roll1);
     arquivo.print(F(";"));
     arquivo.print(pitch1);

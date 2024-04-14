@@ -154,10 +154,13 @@ Global_acceleration linear_acceleration(float accel[3])
 {
 	Global_acceleration accel_out;
 	float a0,a1,a2;
-	float gravidade[3];
 	a0 = accel[0];
 	a1 = accel[1];
 	a2 = accel[2];
+	 
+	accel_out.gravidade[0]=		2 * (q0*q3 - q0*q2);
+	accel_out.gravidade[1]=		2 * (q0*q1 + q2*q3);
+	accel_out.gravidade[2]= 	q0*q0-q1*q1-q2*q2-q3*q3;
 
 	accel_out.An = (a0*q0*q0)+(a0*q1*q1)-(a0*q2*q2)+(2*a2*q0*q2)+(2*a1*q1*q2)-(a0*q3*q3)-(2*a1*q0*q3)+(2*a2*q1*q3);
 	accel_out.Al = (a1*q0*q0)-(a1*q1*q1)-(2*a2*q0*q1)+(a1*q2*q2)+(2*a0*q1*q2)-(a1*q3*q3)+(2*a0*q0*q3)+(2*a2*q2*q3);
