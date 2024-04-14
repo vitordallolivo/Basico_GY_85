@@ -1,6 +1,7 @@
 #ifndef AHRS_GY85
 #define AHRS_GY85
 
+
 float invSqrt(float x);
 
 
@@ -24,6 +25,17 @@ struct PassFilter{
     double yk=0;
 };
 
+struct Global_acceleration
+{
+    double An; // Aceleração em relação ao norte
+    double Al; // Aceleração em relação ao leste
+    double Ab; // Aceleração para baixo
+
+    float gravidade[3];
+};
+
+
+Global_acceleration linear_accelaration(float accel[3]);
 
 
 double LowpassFilter(float data, PassFilter *LOWPASS);

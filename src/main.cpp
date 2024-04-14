@@ -20,9 +20,9 @@
 
 #define SERIAL_WRITE_A
 
-GY_85 gy;
-offset OFF;
-
+GY_85 gy; // Struct do sensor especifico
+offset OFF;  // Struct dos offsets
+Global_acceleration Accel;
 
 /* 
 
@@ -38,9 +38,7 @@ gy.itg.DLPF_CFG = 0x01;
 
 #ifdef MADGWICK_AHRS
 
-PassFilter PASS_FILTER;
-
-
+PassFilter PASS_FILTER; // Struct dos filtros usados
 
 byte flag_uptade_AHRS=0;
 
@@ -64,7 +62,7 @@ void _UPTADE_AHRS(){
 
 void setup(){
 
-  PASS_FILTER.RC =0.65f;
+  PASS_FILTER.RC =0.65f; // Tem que testar um valor que fique bom
 
 
   OFF.gx = 0.00f;
@@ -116,7 +114,6 @@ void loop(){
   
   #ifdef MADGWICK_AHRS  
     if(flag_uptade_AHRS){
-      update(gy.itg.x,gy.itg.y,gy.itg.z,gy.adx.Xg,gy.adx.Yg,gy.adx.Zg,gy.hmc.X,gy.hmc.Y,gy.hmc.Z);
 
       roll1  =  getRoll();
       pitch1 =  getPitch();
@@ -128,6 +125,7 @@ void loop(){
         gyro[j] = gy.gyro[j];
         magnometer[j] = gy.bussola[j];
     }
+      update(gyro[0],gyro[1],gyro[2],acceleration[0],acceleration[1],acceleration[2],magnometer[0],magnometer[1],magnometer[2]);
 
       flag_uptade_AHRS = 0;
 
@@ -136,15 +134,16 @@ void loop(){
     }
   #endif
 
+  Accel = linear_accelaration(acceleration);
   
   #ifdef MADGWICK_AHRS
   #ifdef SERIAL_WRITE_A
   
-    Serial.print(acceleration[0]);
+    Serial.print(Accel.An);
     Serial.print(F("\t"));
-    Serial.print(acceleration[1]);
+    Serial.print(Accel.Al);
     Serial.print(F("\t"));
-    Serial.print(acceleration[2]);
+    Serial.print(Accel.Ab);
     Serial.print(F("\t"));
     Serial.print(gyro[0]);
     Serial.print(F("\t"));

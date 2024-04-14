@@ -150,12 +150,26 @@ void update(float gx, float gy, float gz, float ax, float ay, float az, float mx
 	anglesComputed = 0;
 }
 
+Global_acceleration linear_accelaration(float accel[3])
+{
+	Global_acceleration accel_out;
+	float a0,a1,a2;
+	float gravidade[3];
+	a0 = accel[0];
+	a1 = accel[1];
+	a2 = accel[2];
 
+	accel_out.An = (a0*q0*q0)+(a0*q1*q1)-(a0*q2*q2)+(2*a2*q0*q2)+(2*a1*q1*q2)-(a0*q3*q3)-(2*a1*q0*q3)+(2*a2*q1*q3);
+	accel_out.Al = (a1*q0*q0)-(a1*q1*q1)-(2*a2*q0*q1)+(a1*q2*q2)+(2*a0*q1*q2)-(a1*q3*q3)+(2*a0*q0*q3)+(2*a2*q2*q3);
+	accel_out.Ab = (a2*q0*q0)-(a2*q1*q1)+(2*a1*q0*q1)-(a2*q2*q2)-(2*a0*q0*q2)+(a2*q3*q3)+(2*a0*q1*q3)+(2*a1*q2*q3);
 
+	return accel_out;
+}
 
-double LowpassFilter(float data, PassFilter *LOWPASS){
+double LowpassFilter(float data, PassFilter *LOWPASS)
+{
 
-	double a = invSampleFreq/(LOWPASS->RC + invSampleFreq);
+    double a = invSampleFreq/(LOWPASS->RC + invSampleFreq);
 
 	double Actual_value = a*(data)+(1-data)*LOWPASS->yk;
 
@@ -164,7 +178,6 @@ double LowpassFilter(float data, PassFilter *LOWPASS){
 
 	return Actual_value;
 }
-
 
 double HighpassFilter(float data,PassFilter *HIGHPASS){
 	double a = HIGHPASS->RC / (HIGHPASS->RC + invSampleFreq);
@@ -206,10 +219,10 @@ void updateIMU(float gx, float gy, float gz, float ax, float ay, float az) {
 	float qDot1, qDot2, qDot3, qDot4;
 	float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2 ,_8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
 
-	// Convert gyroscope degrees/sec to radians/sec
-	gx *= 0.0174533f;
-	gy *= 0.0174533f;
-	gz *= 0.0174533f;
+	// // Convert gyroscope degrees/sec to radians/sec
+	// gx *= 0.0174533f;
+	// gy *= 0.0174533f;
+	// gz *= 0.0174533f;
 
 	// Rate of change of quaternion from gyroscope
 	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
