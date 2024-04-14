@@ -115,19 +115,19 @@ struct HMC{
 
   byte B_CONFIG = CRB <<5;
 
-   byte MODE_REGISTER = 0x02;
+  byte MODE_REGISTER = 0x02;
   byte MODE_type =0x00;
 
-   byte X_MSB = 0x03;
-   byte X_LSB = 0x04;
+  byte X_MSB = 0x03;
+  byte X_LSB = 0x04;
 
-   byte Z_MSB = 0x05;
-   byte Z_LSB = 0x06;
+  byte Z_MSB = 0x05;
+  byte Z_LSB = 0x06;
 
-   byte Y_MSB = 0x07;
-   byte Y_LSB = 0x08;
+  byte Y_MSB = 0x07;
+  byte Y_LSB = 0x08;
 
-   byte STATUS_REGISTER = 0x09;
+  byte STATUS_REGISTER = 0x09;
 
   double X,Y,Z;
 
@@ -196,8 +196,6 @@ struct offset{
   float ax,ay,az;
   float mx,my,mz;
 };
-
-
 
 void init_data(GY_85 gy85, offset OFF);
 GY_85 read_data(GY_85 gy85);
