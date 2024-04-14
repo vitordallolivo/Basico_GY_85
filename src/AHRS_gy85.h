@@ -35,7 +35,7 @@ struct Global_acceleration
 };
 
 
-Global_acceleration linear_accelaration(float accel[3]);
+Global_acceleration linear_acceleration(float accel[3]);
 
 
 double LowpassFilter(float data, PassFilter *LOWPASS);

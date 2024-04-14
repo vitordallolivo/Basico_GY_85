@@ -150,7 +150,7 @@ void update(float gx, float gy, float gz, float ax, float ay, float az, float mx
 	anglesComputed = 0;
 }
 
-Global_acceleration linear_accelaration(float accel[3])
+Global_acceleration linear_acceleration(float accel[3])
 {
 	Global_acceleration accel_out;
 	float a0,a1,a2;

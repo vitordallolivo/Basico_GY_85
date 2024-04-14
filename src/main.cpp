@@ -12,13 +12,14 @@
 
 #ifdef SD_CARD_WRITE
   #include <SD.h>
+  #define PIN_SD_CARD 10
   File arquivo;
 #endif
 
 
 // Define se vai ter serial, se comentar não tem output
 
-#define SERIAL_WRITE_A
+// #define SERIAL_WRITE_A
 
 GY_85 gy; // Struct do sensor especifico
 offset OFF;  // Struct dos offsets
@@ -38,25 +39,22 @@ gy.itg.DLPF_CFG = 0x01;
 
 #ifdef MADGWICK_AHRS
 
-PassFilter PASS_FILTER; // Struct dos filtros usados
+  PassFilter PASS_FILTER; // Struct dos filtros usados
 
-byte flag_uptade_AHRS=0;
+  byte flag_uptade_AHRS=0;
 
-float pitch1=0,yaw1=0,roll1=0;
+  float pitch1=0,yaw1=0,roll1=0;
 
-float acceleration[3]={0,0,1};
-float gyro[3]={0,0,0};
-float magnometer[3]={0,0,0};
-float velocity[3]={0,0,0};
-
-
-double time;
-
-void _UPTADE_AHRS(){
-  flag_uptade_AHRS = 1;
-}
+  float acceleration[3]={0,0,1};
+  float gyro[3]={0,0,0};
+  float magnometer[3]={0,0,0};
 
 
+  double time;
+
+  void _UPTADE_AHRS(){
+    flag_uptade_AHRS = 1;
+  }
 
 #endif
 
@@ -83,7 +81,7 @@ void setup(){
   init_data(gy,OFF);
 
   #ifdef SD_CARD_WRITE
-    if(!SD.begin(10)){
+    if(!SD.begin(PIN_SD_CARD)){
         #ifdef SERIAL_WRITE_A
           Serial.println("SD CARD NAO ENCONTRADO");
         #endif
@@ -92,8 +90,7 @@ void setup(){
 
     arquivo = SD.open("example.txt",FILE_WRITE);
 
-    arquivo.println("sensoriamento iniciando;");
-    arquivo.println("ax;ay;az;gx;gy;gz;mx;my;mz;r;p;y;")
+    arquivo.println("aN;aL;aB;mx;my;mz;r;p;y;");
 
   #endif
 
@@ -121,20 +118,23 @@ void loop(){
       
     for(int j = 0 ;j <3;j++){
         acceleration[j] = MedianFilter(gy.acceleration[j],&PASS_FILTER);
-        velocity[j] = acceleration[j]/100;
         gyro[j] = gy.gyro[j];
         magnometer[j] = gy.bussola[j];
     }
+      
       update(gyro[0],gyro[1],gyro[2],acceleration[0],acceleration[1],acceleration[2],magnometer[0],magnometer[1],magnometer[2]);
+      
+      Accel = linear_acceleration(acceleration);
+
+      time = millis();
 
       flag_uptade_AHRS = 0;
 
-      time = millis();
+      
 
     }
   #endif
 
-  Accel = linear_accelaration(acceleration);
   
   #ifdef MADGWICK_AHRS
   #ifdef SERIAL_WRITE_A
@@ -169,23 +169,11 @@ void loop(){
   #endif
 
   #ifdef SD_CARD_WRITE
-    arquivo.print(acceleration[0]);
+    arquivo.print(Accel.An);
     arquivo.print(F(";"));
-    arquivo.print(acceleration[1]);
+    arquivo.print(Accel.Al);
     arquivo.print(F(";"));
-    arquivo.print(acceleration[2]);
-    arquivo.print(F(";"));
-    arquivo.print(gyro[0]);
-    arquivo.print(F(";"));
-    arquivo.print(gyro[1]);
-    arquivo.print(F(";"));
-    arquivo.print(gyro[2]);
-    arquivo.print(F(";"));
-    arquivo.print(magnometer[0]);
-    arquivo.print(F(";"));
-    arquivo.print(magnometer[1]);
-    arquivo.print(F(";"));
-    arquivo.print(magnometer[2]);
+    arquivo.print(Accel.Ab);
     arquivo.print(F(";"));
     arquivo.print(roll1);
     arquivo.print(F(";"));
