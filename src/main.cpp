@@ -23,7 +23,7 @@
 
 GY_85 gy; // Struct do sensor especifico
 offset OFF;  // Struct dos offsets
-Global_acceleration Accel;
+Global_acceleration Accel; // Aceleração e gravidade de acordo com NED ( north, east and down )
 
 /* 
 
